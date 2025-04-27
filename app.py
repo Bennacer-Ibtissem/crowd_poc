@@ -24,7 +24,6 @@ def count_and_display_classes(video_path, model_path, classes_to_count):
 
     assert cap.isOpened(), "Error reading video file"
 
-
     # Get video properties
 
     w, h, fps = (int(cap.get(x)) for x in (cv2.CAP_PROP_FRAME_WIDTH, cv2.CAP_PROP_FRAME_HEIGHT, cv2.CAP_PROP_FPS))
