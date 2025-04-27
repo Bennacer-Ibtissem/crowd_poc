@@ -99,7 +99,7 @@ def count_and_display_classes(video_path, model_path, classes_to_count):
 
 # Streamlit UI Setup
 
-st.title("Live YOLO Video Processing")
+st.title("Crowd detecting and counting")
 
 # Upload video
 
