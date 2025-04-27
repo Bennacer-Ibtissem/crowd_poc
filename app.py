@@ -1,5 +1,4 @@
 import streamlit as st
-import os
 from ultralytics import solutions
 import ultralytics
 import cv2
