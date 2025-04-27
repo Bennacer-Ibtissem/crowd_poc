@@ -126,7 +126,7 @@ if uploaded_file is not None:
 
     model_path = st.sidebar.text_input("Model Path", "yolo11n.pt")
 
-    classes_to_count = st.sidebar.multiselect("Classes to Count", options=[0, 39, 41], default=[0])
+    classes_to_count = st.sidebar.multiselect("Classes to Count", options=["people", "bottle", "cup"], default=[0])
 
     # Start processing the video
 
