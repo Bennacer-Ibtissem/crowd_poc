@@ -1,8 +1,8 @@
 import streamlit as st
-import cv2
 import os
 from ultralytics import solutions
 import ultralytics
+import cv2
 import time
 
 # Function to count specific classes in a video
