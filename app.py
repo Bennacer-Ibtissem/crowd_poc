@@ -44,4 +44,6 @@ if uploaded_file is not None:
 
     output_video_path = "output_specific_classes.mp4"
     count_specific_classes(video_path, output_video_path, "yolo11n.pt", [0,41,39])
-    st.video(output_video_path)
+    with open(output_video_path, 'rb') as video_file:
+        video_bytes = video_file.read()
+        st.video(video_bytes)
