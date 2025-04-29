@@ -55,7 +55,7 @@ with col1:
                 <div class="card">
                     <div class="icon">🕋</div>
                     <div class="title">Crowd in Mecca</div>
-                    <p>Real-time crowd analysis at holy sites using AI-powered cameras.</p>
+                    <p>Real-time crowd analysis at holy sites </p>
                 </div>
             </button>
         </form>
@@ -67,7 +67,7 @@ with col2:
         <div class="card">
             <div class="icon">🚌</div>
             <div class="title">Bus Detection</div>
-            <p>Automatic bus recognition and tracking using computer vision.</p>
+            <p>Automatic bus recognition and tracking </p>
         </div>
     """, unsafe_allow_html=True)
 
@@ -77,6 +77,6 @@ with col3:
         <div class="card">
             <div class="icon">👥</div>
             <div class="title">People in Bus</div>
-            <p>Estimation of bus occupancy using embedded sensors or cameras.</p>
+            <p>Detection of people inside bus.</p>
         </div>
     """, unsafe_allow_html=True)
