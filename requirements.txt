@@ -2,3 +2,7 @@ ultralytics
 opencv-python
 shapely
 lap
+streamlit
+streamlit-extras
+
+
