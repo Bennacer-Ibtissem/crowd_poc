@@ -51,12 +51,60 @@
         "documentation": {}
     },
     {
+        "label": "YOLO",
+        "importPath": "ultralytics",
+        "description": "ultralytics",
+        "isExtraImport": true,
+        "detail": "ultralytics",
+        "documentation": {}
+    },
+    {
         "label": "cv2",
         "kind": 6,
         "isExtraImport": true,
         "importPath": "cv2",
         "description": "cv2",
         "detail": "cv2",
+        "documentation": {}
+    },
+    {
+        "label": "ensure_frame_dims",
+        "importPath": "libs.portrait_handler",
+        "description": "libs.portrait_handler",
+        "isExtraImport": true,
+        "detail": "libs.portrait_handler",
+        "documentation": {}
+    },
+    {
+        "label": "handle_portrait_video",
+        "importPath": "libs.portrait_handler",
+        "description": "libs.portrait_handler",
+        "isExtraImport": true,
+        "detail": "libs.portrait_handler",
+        "documentation": {}
+    },
+    {
+        "label": "resize_frame",
+        "importPath": "libs.portrait_handler",
+        "description": "libs.portrait_handler",
+        "isExtraImport": true,
+        "detail": "libs.portrait_handler",
+        "documentation": {}
+    },
+    {
+        "label": "get_video_orientation",
+        "importPath": "libs.portrait_handler",
+        "description": "libs.portrait_handler",
+        "isExtraImport": true,
+        "detail": "libs.portrait_handler",
+        "documentation": {}
+    },
+    {
+        "label": "get_video_orientation",
+        "importPath": "libs.portrait_handler",
+        "description": "libs.portrait_handler",
+        "isExtraImport": true,
+        "detail": "libs.portrait_handler",
         "documentation": {}
     },
     {
@@ -127,6 +175,63 @@
     },
     {
         "label": "get_model_info",
+        "importPath": "libs.evaluation",
+        "description": "libs.evaluation",
+        "isExtraImport": true,
+        "detail": "libs.evaluation",
+        "documentation": {}
+    },
+    {
+        "label": "process_frame",
+        "importPath": "libs.evaluation",
+        "description": "libs.evaluation",
+        "isExtraImport": true,
+        "detail": "libs.evaluation",
+        "documentation": {}
+    },
+    {
+        "label": "calculate_performance_metrics",
+        "importPath": "libs.evaluation",
+        "description": "libs.evaluation",
+        "isExtraImport": true,
+        "detail": "libs.evaluation",
+        "documentation": {}
+    },
+    {
+        "label": "BlipProcessor",
+        "importPath": "transformers",
+        "description": "transformers",
+        "isExtraImport": true,
+        "detail": "transformers",
+        "documentation": {}
+    },
+    {
+        "label": "BlipForConditionalGeneration",
+        "importPath": "transformers",
+        "description": "transformers",
+        "isExtraImport": true,
+        "detail": "transformers",
+        "documentation": {}
+    },
+    {
+        "label": "Image",
+        "importPath": "PIL",
+        "description": "PIL",
+        "isExtraImport": true,
+        "detail": "PIL",
+        "documentation": {}
+    },
+    {
+        "label": "torch",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "torch",
+        "description": "torch",
+        "detail": "torch",
+        "documentation": {}
+    },
+    {
+        "label": "get_model_info",
         "kind": 2,
         "importPath": "libs.evaluation",
         "description": "libs.evaluation",
@@ -139,7 +244,7 @@
         "kind": 2,
         "importPath": "libs.evaluation",
         "description": "libs.evaluation",
-        "peekOfCode": "def process_frame(frame, model, conf_threshold, classes_to_count):\n    \"\"\"Process a single frame and return metrics\"\"\"\n    start_time = time.time()\n    results = model.predict(frame, conf=conf_threshold)[0]\n    boxes = results.boxes.xyxy.cpu().numpy()\n    classes_detected = results.boxes.cls.cpu().numpy()\n    confidences = results.boxes.conf.cpu().numpy()\n    # Count people (class 0)\n    object_count = sum(1 for cls in classes_detected if int(cls) in classes_to_count)\n    # Draw bounding boxes",
+        "peekOfCode": "def process_frame(\n    frame,\n    model,\n    conf_threshold,\n    classes_to_count,\n    is_portrait=False,\n    force_rotate=False,\n):\n    \"\"\"Process a single frame and return metrics with portrait handling\"\"\"\n    start_time = time.time()",
         "detail": "libs.evaluation",
         "documentation": {}
     },
@@ -148,8 +253,44 @@
         "kind": 2,
         "importPath": "libs.evaluation",
         "description": "libs.evaluation",
-        "peekOfCode": "def calculate_performance_metrics(video_length, frame_size, model_name, num_params, \n                                avg_fps, avg_inference_time, total_inference_time, \n                                total_objects_detected):\n    \"\"\"Calculate and return performance metrics\"\"\"\n    return {\n        \"Metric\": [\n            \"Video Length (s)\", \n            \"Frame Size\", \n            \"Model\", \n            \"Parameters\",",
+        "peekOfCode": "def calculate_performance_metrics(\n    video_length,\n    frame_size,\n    model_name,\n    num_params,\n    avg_fps,\n    avg_inference_time,\n    total_inference_time,\n    total_objects_detected,\n    video_name,",
         "detail": "libs.evaluation",
+        "documentation": {}
+    },
+    {
+        "label": "get_video_orientation",
+        "kind": 2,
+        "importPath": "libs.portrait_handler",
+        "description": "libs.portrait_handler",
+        "peekOfCode": "def get_video_orientation(frame):\n    \"\"\"Detect video orientation based on frame dimensions\"\"\"\n    if frame is None:\n        return \"landscape\"\n    height, width = frame.shape[:2]\n    return \"portrait\" if height > width else \"landscape\"\ndef ensure_frame_dims(frame):\n    \"\"\"Ensure frame dimensions are valid\"\"\"\n    if frame is None:\n        return None",
+        "detail": "libs.portrait_handler",
+        "documentation": {}
+    },
+    {
+        "label": "ensure_frame_dims",
+        "kind": 2,
+        "importPath": "libs.portrait_handler",
+        "description": "libs.portrait_handler",
+        "peekOfCode": "def ensure_frame_dims(frame):\n    \"\"\"Ensure frame dimensions are valid\"\"\"\n    if frame is None:\n        return None\n    try:\n        height, width = frame.shape[:2]\n        if height <= 0 or width <= 0:\n            return None\n        return frame\n    except:",
+        "detail": "libs.portrait_handler",
+        "documentation": {}
+    },
+    {
+        "label": "handle_portrait_video",
+        "kind": 2,
+        "importPath": "libs.portrait_handler",
+        "description": "libs.portrait_handler",
+        "peekOfCode": "def handle_portrait_video(frame, force_rotate=False):\n    \"\"\"\n    Handle portrait video orientation\n    If force_rotate is True, always rotate to landscape orientation\n    \"\"\"\n    if frame is None:\n        return None\n    height, width = frame.shape[:2]\n    orientation = get_video_orientation(frame)\n    # Only rotate if portrait and force_rotate is True",
+        "detail": "libs.portrait_handler",
+        "documentation": {}
+    },
+    {
+        "label": "resize_frame",
+        "kind": 2,
+        "importPath": "libs.portrait_handler",
+        "description": "libs.portrait_handler",
+        "peekOfCode": "def resize_frame(frame, target_size=(640, 640), is_portrait=False, force_rotate=False):\n    \"\"\"Resize frame while maintaining aspect ratio with portrait handling\"\"\"\n    frame = ensure_frame_dims(frame)\n    if frame is None:\n        return np.zeros((*target_size, 3), dtype=np.uint8)\n    # Apply portrait handling if needed\n    if is_portrait:\n        frame = handle_portrait_video(frame, force_rotate)\n    height, width = frame.shape[:2]\n    orientation = \"portrait\" if height > width else \"landscape\"",
+        "detail": "libs.portrait_handler",
         "documentation": {}
     },
     {
@@ -157,7 +298,7 @@
         "kind": 5,
         "importPath": "pages.1_crowd_in_mecca",
         "description": "pages.1_crowd_in_mecca",
-        "peekOfCode": "uploaded_file = st.sidebar.file_uploader(\"Upload a video file\", type=[\"mp4\", \"avi\", \"mov\"], key=\"sidebar\")\n# Sidebar: Model selection\nst.sidebar.title(\"🔧 Settings\")\n# Only YOLOv11 models as specified\navailable_models = [\n    \"yolo11n.pt\", \n    \"yolo11s.pt\", \n    \"yolo11m.pt\", \n    \"yolo11l.pt\", \n    \"yolo11x.pt\"",
+        "peekOfCode": "uploaded_file = st.sidebar.file_uploader(\n    \"Upload a video file\", type=[\"mp4\", \"avi\", \"mov\"], key=\"sidebar\"\n)\n# Sidebar: Model selection\nst.sidebar.title(\"🔧 Settings\")\n# Only YOLOv11 models as specified\navailable_models = [\n    \"yolo11n.pt\",\n    \"yolo11s.pt\",\n    \"yolo11m.pt\",",
         "detail": "pages.1_crowd_in_mecca",
         "documentation": {}
     },
@@ -166,7 +307,7 @@
         "kind": 5,
         "importPath": "pages.1_crowd_in_mecca",
         "description": "pages.1_crowd_in_mecca",
-        "peekOfCode": "available_models = [\n    \"yolo11n.pt\", \n    \"yolo11s.pt\", \n    \"yolo11m.pt\", \n    \"yolo11l.pt\", \n    \"yolo11x.pt\"\n]\nselected_model = st.sidebar.selectbox(\"Select Model\", available_models)\n# Classes to count (0=person by default)\nclasses_to_count = [0]  # Simplified to just count people by default",
+        "peekOfCode": "available_models = [\n    \"yolo11n.pt\",\n    \"yolo11s.pt\",\n    \"yolo11m.pt\",\n    \"yolo11l.pt\",\n    \"yolo11x.pt\",\n]\nselected_model = st.sidebar.selectbox(\"Select Model\", available_models)\n# Classes to count (0=person by default)\nclasses_to_count = [0]  # Simplified to just count people by default",
         "detail": "pages.1_crowd_in_mecca",
         "documentation": {}
     },
@@ -175,7 +316,7 @@
         "kind": 5,
         "importPath": "pages.1_crowd_in_mecca",
         "description": "pages.1_crowd_in_mecca",
-        "peekOfCode": "selected_model = st.sidebar.selectbox(\"Select Model\", available_models)\n# Classes to count (0=person by default)\nclasses_to_count = [0]  # Simplified to just count people by default\n# Confidence threshold slider\nconf_threshold = st.sidebar.slider(\"Confidence Threshold\", 0.1, 0.9, 0.5, 0.05)\n# Main app behavior\nif uploaded_file is not None:\n    input_video_path = \"temp_video.mp4\"\n    with open(input_video_path, 'wb') as f:\n        f.write(uploaded_file.getbuffer())",
+        "peekOfCode": "selected_model = st.sidebar.selectbox(\"Select Model\", available_models)\n# Classes to count (0=person by default)\nclasses_to_count = [0]  # Simplified to just count people by default\n# Confidence threshold slider\nconf_threshold = st.sidebar.slider(\n    \"Confidence Threshold\", 0.1, 0.9, 0.3, 0.05\n)  # Default changed to 0.3 for better detection\n# Add mobile video handling options\nst.sidebar.markdown(\"---\")\nst.sidebar.subheader(\"📱 Mobile Video Options\")",
         "detail": "pages.1_crowd_in_mecca",
         "documentation": {}
     },
@@ -184,7 +325,7 @@
         "kind": 5,
         "importPath": "pages.1_crowd_in_mecca",
         "description": "pages.1_crowd_in_mecca",
-        "peekOfCode": "classes_to_count = [0]  # Simplified to just count people by default\n# Confidence threshold slider\nconf_threshold = st.sidebar.slider(\"Confidence Threshold\", 0.1, 0.9, 0.5, 0.05)\n# Main app behavior\nif uploaded_file is not None:\n    input_video_path = \"temp_video.mp4\"\n    with open(input_video_path, 'wb') as f:\n        f.write(uploaded_file.getbuffer())\n    # Create two columns with equal width for videos\n    col1, col2 = st.columns(2)",
+        "peekOfCode": "classes_to_count = [0]  # Simplified to just count people by default\n# Confidence threshold slider\nconf_threshold = st.sidebar.slider(\n    \"Confidence Threshold\", 0.1, 0.9, 0.3, 0.05\n)  # Default changed to 0.3 for better detection\n# Add mobile video handling options\nst.sidebar.markdown(\"---\")\nst.sidebar.subheader(\"📱 Mobile Video Options\")\nis_portrait = st.sidebar.checkbox(\n    \"Portrait Video\",",
         "detail": "pages.1_crowd_in_mecca",
         "documentation": {}
     },
@@ -193,8 +334,71 @@
         "kind": 5,
         "importPath": "pages.1_crowd_in_mecca",
         "description": "pages.1_crowd_in_mecca",
-        "peekOfCode": "conf_threshold = st.sidebar.slider(\"Confidence Threshold\", 0.1, 0.9, 0.5, 0.05)\n# Main app behavior\nif uploaded_file is not None:\n    input_video_path = \"temp_video.mp4\"\n    with open(input_video_path, 'wb') as f:\n        f.write(uploaded_file.getbuffer())\n    # Create two columns with equal width for videos\n    col1, col2 = st.columns(2)\n    with col1:\n        st.subheader(\"📊 Original Video\")",
+        "peekOfCode": "conf_threshold = st.sidebar.slider(\n    \"Confidence Threshold\", 0.1, 0.9, 0.3, 0.05\n)  # Default changed to 0.3 for better detection\n# Add mobile video handling options\nst.sidebar.markdown(\"---\")\nst.sidebar.subheader(\"📱 Mobile Video Options\")\nis_portrait = st.sidebar.checkbox(\n    \"Portrait Video\",\n    value=False,\n    help=\"Check this if your video is in portrait orientation (mobile)\",",
         "detail": "pages.1_crowd_in_mecca",
+        "documentation": {}
+    },
+    {
+        "label": "is_portrait",
+        "kind": 5,
+        "importPath": "pages.1_crowd_in_mecca",
+        "description": "pages.1_crowd_in_mecca",
+        "peekOfCode": "is_portrait = st.sidebar.checkbox(\n    \"Portrait Video\",\n    value=False,\n    help=\"Check this if your video is in portrait orientation (mobile)\",\n)\nforce_rotate = st.sidebar.checkbox(\n    \"Auto-rotate to Landscape\",\n    value=False,\n    help=\"Automatically rotate portrait videos for processing\",\n)",
+        "detail": "pages.1_crowd_in_mecca",
+        "documentation": {}
+    },
+    {
+        "label": "force_rotate",
+        "kind": 5,
+        "importPath": "pages.1_crowd_in_mecca",
+        "description": "pages.1_crowd_in_mecca",
+        "peekOfCode": "force_rotate = st.sidebar.checkbox(\n    \"Auto-rotate to Landscape\",\n    value=False,\n    help=\"Automatically rotate portrait videos for processing\",\n)\n# Main app behavior\nif uploaded_file is not None:\n    input_video_path = \"temp_video.mp4\"\n    with open(input_video_path, \"wb\") as f:\n        f.write(uploaded_file.getbuffer())",
+        "detail": "pages.1_crowd_in_mecca",
+        "documentation": {}
+    },
+    {
+        "label": "uploaded_file",
+        "kind": 5,
+        "importPath": "pages.2_bus_detection",
+        "description": "pages.2_bus_detection",
+        "peekOfCode": "uploaded_file = st.sidebar.file_uploader(\"Upload a video file\", type=[\"mp4\", \"avi\", \"mov\"], key=\"sidebar\")\n# Sidebar: Model selection\nst.sidebar.title(\"🔧 Settings\")\n# Only YOLOv11 models as specified\navailable_models = [\n    \"yolo11n.pt\", \n    \"yolo11s.pt\", \n    \"yolo11m.pt\", \n    \"yolo11l.pt\", \n    \"yolo11x.pt\"",
+        "detail": "pages.2_bus_detection",
+        "documentation": {}
+    },
+    {
+        "label": "available_models",
+        "kind": 5,
+        "importPath": "pages.2_bus_detection",
+        "description": "pages.2_bus_detection",
+        "peekOfCode": "available_models = [\n    \"yolo11n.pt\", \n    \"yolo11s.pt\", \n    \"yolo11m.pt\", \n    \"yolo11l.pt\", \n    \"yolo11x.pt\"\n]\nselected_model = st.sidebar.selectbox(\"Select Model\", available_models)\n# Classes to count (0=person by default)\nclasses_to_count = [0]  # Simplified to just count people by default",
+        "detail": "pages.2_bus_detection",
+        "documentation": {}
+    },
+    {
+        "label": "selected_model",
+        "kind": 5,
+        "importPath": "pages.2_bus_detection",
+        "description": "pages.2_bus_detection",
+        "peekOfCode": "selected_model = st.sidebar.selectbox(\"Select Model\", available_models)\n# Classes to count (0=person by default)\nclasses_to_count = [0]  # Simplified to just count people by default\n# Confidence threshold slider\nconf_threshold = st.sidebar.slider(\"Confidence Threshold\", 0.1, 0.9, 0.3, 0.05)  # Default changed to 0.3 for better detection\n# Main app behavior\nif uploaded_file is not None:\n    input_video_path = \"temp_video.mp4\"\n    with open(input_video_path, 'wb') as f:\n        f.write(uploaded_file.getbuffer())",
+        "detail": "pages.2_bus_detection",
+        "documentation": {}
+    },
+    {
+        "label": "classes_to_count",
+        "kind": 5,
+        "importPath": "pages.2_bus_detection",
+        "description": "pages.2_bus_detection",
+        "peekOfCode": "classes_to_count = [0]  # Simplified to just count people by default\n# Confidence threshold slider\nconf_threshold = st.sidebar.slider(\"Confidence Threshold\", 0.1, 0.9, 0.3, 0.05)  # Default changed to 0.3 for better detection\n# Main app behavior\nif uploaded_file is not None:\n    input_video_path = \"temp_video.mp4\"\n    with open(input_video_path, 'wb') as f:\n        f.write(uploaded_file.getbuffer())\n    # Create two columns with equal width for videos\n    col1, col2 = st.columns(2)",
+        "detail": "pages.2_bus_detection",
+        "documentation": {}
+    },
+    {
+        "label": "conf_threshold",
+        "kind": 5,
+        "importPath": "pages.2_bus_detection",
+        "description": "pages.2_bus_detection",
+        "peekOfCode": "conf_threshold = st.sidebar.slider(\"Confidence Threshold\", 0.1, 0.9, 0.3, 0.05)  # Default changed to 0.3 for better detection\n# Main app behavior\nif uploaded_file is not None:\n    input_video_path = \"temp_video.mp4\"\n    with open(input_video_path, 'wb') as f:\n        f.write(uploaded_file.getbuffer())\n    # Create two columns with equal width for videos\n    col1, col2 = st.columns(2)\n    with col1:\n        st.subheader(\"📊 Original Video\")",
+        "detail": "pages.2_bus_detection",
         "documentation": {}
     },
     {
@@ -240,6 +444,78 @@
         "description": "pages.people_in_bus",
         "peekOfCode": "conf_threshold = st.sidebar.slider(\"Confidence Threshold\", 0.1, 0.9, 0.5, 0.05)\n# Main app behavior\nif uploaded_file is not None:\n    input_video_path = \"temp_video.mp4\"\n    with open(input_video_path, 'wb') as f:\n        f.write(uploaded_file.getbuffer())\n    # Create two columns with equal width for videos\n    col1, col2 = st.columns(2)\n    with col1:\n        st.subheader(\"📊 Original Video\")",
         "detail": "pages.people_in_bus",
+        "documentation": {}
+    },
+    {
+        "label": "cap",
+        "kind": 5,
+        "importPath": "test",
+        "description": "test",
+        "peekOfCode": "cap = cv2.VideoCapture(\"bus1.mp4\")\nsuccess, frame = cap.read()\ncount = 0\nwhile success:\n    cv2.imwrite(f\"frame_{count}.jpg\", frame)\n    success, frame = cap.read()\n    count += 1\nprocessor = BlipProcessor.from_pretrained(\"Salesforce/blip2-opt-2.7b\")\nmodel = BlipForConditionalGeneration.from_pretrained(\"Salesforce/blip2-opt-2.7b\").to(\"cuda\")\nimage = Image.open(\"frame_0.jpg\").convert(\"RGB\")",
+        "detail": "test",
+        "documentation": {}
+    },
+    {
+        "label": "count",
+        "kind": 5,
+        "importPath": "test",
+        "description": "test",
+        "peekOfCode": "count = 0\nwhile success:\n    cv2.imwrite(f\"frame_{count}.jpg\", frame)\n    success, frame = cap.read()\n    count += 1\nprocessor = BlipProcessor.from_pretrained(\"Salesforce/blip2-opt-2.7b\")\nmodel = BlipForConditionalGeneration.from_pretrained(\"Salesforce/blip2-opt-2.7b\").to(\"cuda\")\nimage = Image.open(\"frame_0.jpg\").convert(\"RGB\")\nprompt = \"Describe the objects in this image and identify any buses and their license plate numbers.\"\ninputs = processor(image, text=prompt, return_tensors=\"pt\").to(\"cuda\")",
+        "detail": "test",
+        "documentation": {}
+    },
+    {
+        "label": "processor",
+        "kind": 5,
+        "importPath": "test",
+        "description": "test",
+        "peekOfCode": "processor = BlipProcessor.from_pretrained(\"Salesforce/blip2-opt-2.7b\")\nmodel = BlipForConditionalGeneration.from_pretrained(\"Salesforce/blip2-opt-2.7b\").to(\"cuda\")\nimage = Image.open(\"frame_0.jpg\").convert(\"RGB\")\nprompt = \"Describe the objects in this image and identify any buses and their license plate numbers.\"\ninputs = processor(image, text=prompt, return_tensors=\"pt\").to(\"cuda\")\nout = model.generate(**inputs, max_new_tokens=100)\nprint(processor.decode(out[0], skip_special_tokens=True))",
+        "detail": "test",
+        "documentation": {}
+    },
+    {
+        "label": "model",
+        "kind": 5,
+        "importPath": "test",
+        "description": "test",
+        "peekOfCode": "model = BlipForConditionalGeneration.from_pretrained(\"Salesforce/blip2-opt-2.7b\").to(\"cuda\")\nimage = Image.open(\"frame_0.jpg\").convert(\"RGB\")\nprompt = \"Describe the objects in this image and identify any buses and their license plate numbers.\"\ninputs = processor(image, text=prompt, return_tensors=\"pt\").to(\"cuda\")\nout = model.generate(**inputs, max_new_tokens=100)\nprint(processor.decode(out[0], skip_special_tokens=True))",
+        "detail": "test",
+        "documentation": {}
+    },
+    {
+        "label": "image",
+        "kind": 5,
+        "importPath": "test",
+        "description": "test",
+        "peekOfCode": "image = Image.open(\"frame_0.jpg\").convert(\"RGB\")\nprompt = \"Describe the objects in this image and identify any buses and their license plate numbers.\"\ninputs = processor(image, text=prompt, return_tensors=\"pt\").to(\"cuda\")\nout = model.generate(**inputs, max_new_tokens=100)\nprint(processor.decode(out[0], skip_special_tokens=True))",
+        "detail": "test",
+        "documentation": {}
+    },
+    {
+        "label": "prompt",
+        "kind": 5,
+        "importPath": "test",
+        "description": "test",
+        "peekOfCode": "prompt = \"Describe the objects in this image and identify any buses and their license plate numbers.\"\ninputs = processor(image, text=prompt, return_tensors=\"pt\").to(\"cuda\")\nout = model.generate(**inputs, max_new_tokens=100)\nprint(processor.decode(out[0], skip_special_tokens=True))",
+        "detail": "test",
+        "documentation": {}
+    },
+    {
+        "label": "inputs",
+        "kind": 5,
+        "importPath": "test",
+        "description": "test",
+        "peekOfCode": "inputs = processor(image, text=prompt, return_tensors=\"pt\").to(\"cuda\")\nout = model.generate(**inputs, max_new_tokens=100)\nprint(processor.decode(out[0], skip_special_tokens=True))",
+        "detail": "test",
+        "documentation": {}
+    },
+    {
+        "label": "out",
+        "kind": 5,
+        "importPath": "test",
+        "description": "test",
+        "peekOfCode": "out = model.generate(**inputs, max_new_tokens=100)\nprint(processor.decode(out[0], skip_special_tokens=True))",
+        "detail": "test",
         "documentation": {}
     }
 ]

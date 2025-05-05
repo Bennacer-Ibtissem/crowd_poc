@@ -63,12 +63,14 @@ with col1:
 
 # 🚌 Card 2 - placeholder (no link yet)
 with col2:
-    st.markdown("""
+    st.markdown("""  <form action="/bus_detection" target="_self">
+            <button type="submit" style="all: unset; width: 100%;">
         <div class="card">
             <div class="icon">🚌</div>
             <div class="title">Bus Detection</div>
-            <p>Automatic bus recognition and tracking </p>
-        </div>
+            <p>Automatic bus recognition and tracking </p> 
+        </div> </button>
+        </form>
     """, unsafe_allow_html=True)
 
 # 👥 Card 3 - placeholder (no link yet)
