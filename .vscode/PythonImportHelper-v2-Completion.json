@@ -1,20 +1,11 @@
 [
     {
-        "label": "os",
+        "label": "cv2",
         "kind": 6,
         "isExtraImport": true,
-        "importPath": "os",
-        "description": "os",
-        "detail": "os",
-        "documentation": {}
-    },
-    {
-        "label": "time",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "time",
-        "description": "time",
-        "detail": "time",
+        "importPath": "cv2",
+        "description": "cv2",
+        "detail": "cv2",
         "documentation": {}
     },
     {
@@ -27,44 +18,93 @@
         "documentation": {}
     },
     {
-        "label": "YOLO",
-        "importPath": "ultralytics",
-        "description": "ultralytics",
-        "isExtraImport": true,
-        "detail": "ultralytics",
-        "documentation": {}
-    },
-    {
-        "label": "YOLO",
-        "importPath": "ultralytics",
-        "description": "ultralytics",
-        "isExtraImport": true,
-        "detail": "ultralytics",
-        "documentation": {}
-    },
-    {
-        "label": "YOLO",
-        "importPath": "ultralytics",
-        "description": "ultralytics",
-        "isExtraImport": true,
-        "detail": "ultralytics",
-        "documentation": {}
-    },
-    {
-        "label": "YOLO",
-        "importPath": "ultralytics",
-        "description": "ultralytics",
-        "isExtraImport": true,
-        "detail": "ultralytics",
-        "documentation": {}
-    },
-    {
-        "label": "cv2",
+        "label": "time",
         "kind": 6,
         "isExtraImport": true,
-        "importPath": "cv2",
-        "description": "cv2",
-        "detail": "cv2",
+        "importPath": "time",
+        "description": "time",
+        "detail": "time",
+        "documentation": {}
+    },
+    {
+        "label": "time",
+        "importPath": "time",
+        "description": "time",
+        "isExtraImport": true,
+        "detail": "time",
+        "documentation": {}
+    },
+    {
+        "label": "resize_frame",
+        "importPath": "libs.core.video_utils",
+        "description": "libs.core.video_utils",
+        "isExtraImport": true,
+        "detail": "libs.core.video_utils",
+        "documentation": {}
+    },
+    {
+        "label": "enhance_frame",
+        "importPath": "libs.core.video_utils",
+        "description": "libs.core.video_utils",
+        "isExtraImport": true,
+        "detail": "libs.core.video_utils",
+        "documentation": {}
+    },
+    {
+        "label": "get_video_orientation",
+        "importPath": "libs.core.video_utils",
+        "description": "libs.core.video_utils",
+        "isExtraImport": true,
+        "detail": "libs.core.video_utils",
+        "documentation": {}
+    },
+    {
+        "label": "YOLO",
+        "importPath": "ultralytics",
+        "description": "ultralytics",
+        "isExtraImport": true,
+        "detail": "ultralytics",
+        "documentation": {}
+    },
+    {
+        "label": "YOLO",
+        "importPath": "ultralytics",
+        "description": "ultralytics",
+        "isExtraImport": true,
+        "detail": "ultralytics",
+        "documentation": {}
+    },
+    {
+        "label": "YOLO",
+        "importPath": "ultralytics",
+        "description": "ultralytics",
+        "isExtraImport": true,
+        "detail": "ultralytics",
+        "documentation": {}
+    },
+    {
+        "label": "YOLO",
+        "importPath": "ultralytics",
+        "description": "ultralytics",
+        "isExtraImport": true,
+        "detail": "ultralytics",
+        "documentation": {}
+    },
+    {
+        "label": "YOLO",
+        "importPath": "ultralytics",
+        "description": "ultralytics",
+        "isExtraImport": true,
+        "detail": "ultralytics",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
         "documentation": {}
     },
     {
@@ -175,26 +215,26 @@
     },
     {
         "label": "get_model_info",
-        "importPath": "libs.evaluation",
-        "description": "libs.evaluation",
+        "importPath": "libs.core.model_loader",
+        "description": "libs.core.model_loader",
         "isExtraImport": true,
-        "detail": "libs.evaluation",
+        "detail": "libs.core.model_loader",
         "documentation": {}
     },
     {
-        "label": "process_frame",
-        "importPath": "libs.evaluation",
-        "description": "libs.evaluation",
+        "label": "process_frame_object",
+        "importPath": "libs.core.frame_processor",
+        "description": "libs.core.frame_processor",
         "isExtraImport": true,
-        "detail": "libs.evaluation",
+        "detail": "libs.core.frame_processor",
         "documentation": {}
     },
     {
         "label": "calculate_performance_metrics",
-        "importPath": "libs.evaluation",
-        "description": "libs.evaluation",
+        "importPath": "libs.core.metrics",
+        "description": "libs.core.metrics",
         "isExtraImport": true,
-        "detail": "libs.evaluation",
+        "detail": "libs.core.metrics",
         "documentation": {}
     },
     {
@@ -228,6 +268,87 @@
         "importPath": "torch",
         "description": "torch",
         "detail": "torch",
+        "documentation": {}
+    },
+    {
+        "label": "draw_boxes",
+        "kind": 2,
+        "importPath": "libs.core.frame_processor",
+        "description": "libs.core.frame_processor",
+        "peekOfCode": "def draw_boxes(frame, boxes, classes_detected, confidences, orig_w, orig_h, res_w, res_h, classes_to_count, counts):\n    scale_x = orig_w / res_w\n    scale_y = orig_h / res_h\n    COLORS = {\n        0: (255,0,0),\n        2: (0, 0, 255),\n        5: (0, 255, 0),\n        'default': (255, 255, 0)\n    }\n    for idx, cls_id in enumerate(classes_detected):",
+        "detail": "libs.core.frame_processor",
+        "documentation": {}
+    },
+    {
+        "label": "process_frame_object",
+        "kind": 2,
+        "importPath": "libs.core.frame_processor",
+        "description": "libs.core.frame_processor",
+        "peekOfCode": "def process_frame_object(frame, model, conf_threshold, classes_to_count):\n    start_time = time()\n    if frame is None:\n        return frame, 0, 0\n    orig_height, orig_width = frame.shape[:2]\n    enhanced = enhance_frame(frame)\n    resized = resize_frame(enhanced)\n    try:\n        results = model.predict(resized, conf=conf_threshold, iou=0.45, classes=classes_to_count)[0]\n        boxes = results.boxes.xyxy.cpu().numpy()",
+        "detail": "libs.core.frame_processor",
+        "documentation": {}
+    },
+    {
+        "label": "calculate_performance_metrics",
+        "kind": 2,
+        "importPath": "libs.core.metrics",
+        "description": "libs.core.metrics",
+        "peekOfCode": "def calculate_performance_metrics(video_length, frame_size, model_name, num_params,\n    avg_fps, avg_inference_time, total_inference_time,\n    total_objects_detected, video_name, total_frames,\n    avg_objects_per_frame, max_objects_detected):\n    return {\n    \"Metric\": [\n    \"Video Name\",\n    \"Video Length (frames)\",\n    \"Frame Size\",\n    \"Model\",",
+        "detail": "libs.core.metrics",
+        "documentation": {}
+    },
+    {
+        "label": "load_yolo_model",
+        "kind": 2,
+        "importPath": "libs.core.model_loader",
+        "description": "libs.core.model_loader",
+        "peekOfCode": "def load_yolo_model(model_path: str):\n    if not os.path.exists(model_path):\n        raise FileNotFoundError(f\"Model does not exist at {model_path}\")\n    return YOLO(model_path)\ndef get_model_info(model_path: str):\n    try:\n        size_bytes = os.path.getsize(model_path)\n        size_mb = size_bytes / (1024 * 1024)\n        model = YOLO(model_path)\n        num_params = sum(p.numel() for p in model.parameters())",
+        "detail": "libs.core.model_loader",
+        "documentation": {}
+    },
+    {
+        "label": "get_model_info",
+        "kind": 2,
+        "importPath": "libs.core.model_loader",
+        "description": "libs.core.model_loader",
+        "peekOfCode": "def get_model_info(model_path: str):\n    try:\n        size_bytes = os.path.getsize(model_path)\n        size_mb = size_bytes / (1024 * 1024)\n        model = YOLO(model_path)\n        num_params = sum(p.numel() for p in model.parameters())\n        return size_mb, num_params\n    except Exception:\n        return 0, 0",
+        "detail": "libs.core.model_loader",
+        "documentation": {}
+    },
+    {
+        "label": "get_video_orientation",
+        "kind": 2,
+        "importPath": "libs.core.video_utils",
+        "description": "libs.core.video_utils",
+        "peekOfCode": "def get_video_orientation(frame):\n    if frame is None:\n        return 'landscape'\n    h, w = frame.shape[:2]\n    return 'portrait' if h > w else 'landscape'\ndef ensure_frame_dims(frame):\n    try:\n        if frame is None:\n            return None\n        h, w = frame.shape[:2]",
+        "detail": "libs.core.video_utils",
+        "documentation": {}
+    },
+    {
+        "label": "ensure_frame_dims",
+        "kind": 2,
+        "importPath": "libs.core.video_utils",
+        "description": "libs.core.video_utils",
+        "peekOfCode": "def ensure_frame_dims(frame):\n    try:\n        if frame is None:\n            return None\n        h, w = frame.shape[:2]\n        return frame if h > 0 and w > 0 else None\n    except:\n        return None\ndef enhance_frame(frame):\n    try:",
+        "detail": "libs.core.video_utils",
+        "documentation": {}
+    },
+    {
+        "label": "enhance_frame",
+        "kind": 2,
+        "importPath": "libs.core.video_utils",
+        "description": "libs.core.video_utils",
+        "peekOfCode": "def enhance_frame(frame):\n    try:\n        lab = cv2.cvtColor(frame, cv2.COLOR_BGR2LAB)\n        l, a, b = cv2.split(lab)\n        clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8, 8))\n        cl = clahe.apply(l)\n        merged = cv2.merge((cl, a, b))\n        return cv2.cvtColor(merged, cv2.COLOR_LAB2BGR)\n    except Exception:\n        return frame",
+        "detail": "libs.core.video_utils",
+        "documentation": {}
+    },
+    {
+        "label": "resize_frame",
+        "kind": 2,
+        "importPath": "libs.core.video_utils",
+        "description": "libs.core.video_utils",
+        "peekOfCode": "def resize_frame(frame, target_size=(640, 640)):\n    \"\"\"Resize frame while maintaining aspect ratio\"\"\"\n    frame = ensure_frame_dims(frame)\n    if frame is None:\n        return np.zeros((*target_size, 3), dtype=np.uint8)\n    height, width = frame.shape[:2]\n    # orientation = get_video_orientation(frame)\n    # # Calculate target dimensions while maintaining aspect ratio\n    # if orientation == 'portrait':\n    #     # For portrait videos, use height as the primary dimension",
+        "detail": "libs.core.video_utils",
         "documentation": {}
     },
     {
@@ -294,11 +415,56 @@
         "documentation": {}
     },
     {
+        "label": "stream_url",
+        "kind": 5,
+        "importPath": "libs.streaming_videos",
+        "description": "libs.streaming_videos",
+        "peekOfCode": "stream_url = \"rtmp://10.30.1.181:443/live/stream\"\ncap = cv2.VideoCapture(stream_url)\nwhile cap.isOpened():\n    ret, frame = cap.read()\n    if not ret:\n        break\n    # Process the frame here\n    cv2.imshow(\"Live Stream\", frame)\n    if cv2.waitKey(1) & 0xFF == ord('q'):\n        break",
+        "detail": "libs.streaming_videos",
+        "documentation": {}
+    },
+    {
+        "label": "cap",
+        "kind": 5,
+        "importPath": "libs.streaming_videos",
+        "description": "libs.streaming_videos",
+        "peekOfCode": "cap = cv2.VideoCapture(stream_url)\nwhile cap.isOpened():\n    ret, frame = cap.read()\n    if not ret:\n        break\n    # Process the frame here\n    cv2.imshow(\"Live Stream\", frame)\n    if cv2.waitKey(1) & 0xFF == ord('q'):\n        break\ncap.release()",
+        "detail": "libs.streaming_videos",
+        "documentation": {}
+    },
+    {
+        "label": "load_model",
+        "kind": 2,
+        "importPath": "pages.1_crowd_in_mecca",
+        "description": "pages.1_crowd_in_mecca",
+        "peekOfCode": "def load_model(path):\n    return YOLO(path)\n# --- Upload Mode ---\nif video_input_mode == \"Upload\":\n    if uploaded_file is not None:\n        col1, col2 = st.columns(2)\n        input_video_path = \"temp_video.mp4\"\n        with open(input_video_path, \"wb\") as f:\n            f.write(uploaded_file.getbuffer())\n        with col1:",
+        "detail": "pages.1_crowd_in_mecca",
+        "documentation": {}
+    },
+    {
+        "label": "video_input_mode",
+        "kind": 5,
+        "importPath": "pages.1_crowd_in_mecca",
+        "description": "pages.1_crowd_in_mecca",
+        "peekOfCode": "video_input_mode = st.sidebar.radio(\n    \"Choose Input Source\",\n    options=[\"Upload\", \"Stream\"],\n    index=0,\n    horizontal=True\n)\nuploaded_file = None\nstream_url = \"\"\n# Show file uploader only in Upload mode\nif video_input_mode == \"Upload\":",
+        "detail": "pages.1_crowd_in_mecca",
+        "documentation": {}
+    },
+    {
         "label": "uploaded_file",
         "kind": 5,
         "importPath": "pages.1_crowd_in_mecca",
         "description": "pages.1_crowd_in_mecca",
-        "peekOfCode": "uploaded_file = st.sidebar.file_uploader(\n    \"Upload a video file\", type=[\"mp4\", \"avi\", \"mov\"], key=\"sidebar\"\n)\n# Sidebar: Model selection\nst.sidebar.title(\"🔧 Settings\")\n# Only YOLOv11 models as specified\navailable_models = [\n    \"yolo11n.pt\",\n    \"yolo11s.pt\",\n    \"yolo11m.pt\",",
+        "peekOfCode": "uploaded_file = None\nstream_url = \"\"\n# Show file uploader only in Upload mode\nif video_input_mode == \"Upload\":\n    uploaded_file = st.sidebar.file_uploader(\n        \"📁 Browse a video file\", type=[\"mp4\", \"avi\", \"mov\"]\n    )\n# Show RTMP input only in Stream mode\nif video_input_mode == \"Stream\":\n    stream_url = st.sidebar.text_input(",
+        "detail": "pages.1_crowd_in_mecca",
+        "documentation": {}
+    },
+    {
+        "label": "stream_url",
+        "kind": 5,
+        "importPath": "pages.1_crowd_in_mecca",
+        "description": "pages.1_crowd_in_mecca",
+        "peekOfCode": "stream_url = \"\"\n# Show file uploader only in Upload mode\nif video_input_mode == \"Upload\":\n    uploaded_file = st.sidebar.file_uploader(\n        \"📁 Browse a video file\", type=[\"mp4\", \"avi\", \"mov\"]\n    )\n# Show RTMP input only in Stream mode\nif video_input_mode == \"Stream\":\n    stream_url = st.sidebar.text_input(\n        \"🔗 Stream URL\", ",
         "detail": "pages.1_crowd_in_mecca",
         "documentation": {}
     },
@@ -307,7 +473,7 @@
         "kind": 5,
         "importPath": "pages.1_crowd_in_mecca",
         "description": "pages.1_crowd_in_mecca",
-        "peekOfCode": "available_models = [\n    \"yolo11n.pt\",\n    \"yolo11s.pt\",\n    \"yolo11m.pt\",\n    \"yolo11l.pt\",\n    \"yolo11x.pt\",\n]\nselected_model = st.sidebar.selectbox(\"Select Model\", available_models)\n# Classes to count (0=person by default)\nclasses_to_count = [0]  # Simplified to just count people by default",
+        "peekOfCode": "available_models = [\n    \"yolo11n.pt\", \"yolo11s.pt\", \"yolo11m.pt\", \"yolo11l.pt\", \"yolo11x.pt\"\n]\nselected_model = st.sidebar.selectbox(\"Select Model\", available_models)\nconf_threshold = st.sidebar.slider(\"Confidence Threshold\", 0.1, 0.9, 0.3, 0.05)\n# Portrait options only for upload\nis_portrait = False\nforce_rotate = False\nif video_input_mode == \"Upload\":\n    st.sidebar.subheader(\"📱 Mobile Video Options\")",
         "detail": "pages.1_crowd_in_mecca",
         "documentation": {}
     },
@@ -316,16 +482,7 @@
         "kind": 5,
         "importPath": "pages.1_crowd_in_mecca",
         "description": "pages.1_crowd_in_mecca",
-        "peekOfCode": "selected_model = st.sidebar.selectbox(\"Select Model\", available_models)\n# Classes to count (0=person by default)\nclasses_to_count = [0]  # Simplified to just count people by default\n# Confidence threshold slider\nconf_threshold = st.sidebar.slider(\n    \"Confidence Threshold\", 0.1, 0.9, 0.3, 0.05\n)  # Default changed to 0.3 for better detection\n# Add mobile video handling options\nst.sidebar.markdown(\"---\")\nst.sidebar.subheader(\"📱 Mobile Video Options\")",
-        "detail": "pages.1_crowd_in_mecca",
-        "documentation": {}
-    },
-    {
-        "label": "classes_to_count",
-        "kind": 5,
-        "importPath": "pages.1_crowd_in_mecca",
-        "description": "pages.1_crowd_in_mecca",
-        "peekOfCode": "classes_to_count = [0]  # Simplified to just count people by default\n# Confidence threshold slider\nconf_threshold = st.sidebar.slider(\n    \"Confidence Threshold\", 0.1, 0.9, 0.3, 0.05\n)  # Default changed to 0.3 for better detection\n# Add mobile video handling options\nst.sidebar.markdown(\"---\")\nst.sidebar.subheader(\"📱 Mobile Video Options\")\nis_portrait = st.sidebar.checkbox(\n    \"Portrait Video\",",
+        "peekOfCode": "selected_model = st.sidebar.selectbox(\"Select Model\", available_models)\nconf_threshold = st.sidebar.slider(\"Confidence Threshold\", 0.1, 0.9, 0.3, 0.05)\n# Portrait options only for upload\nis_portrait = False\nforce_rotate = False\nif video_input_mode == \"Upload\":\n    st.sidebar.subheader(\"📱 Mobile Video Options\")\n    is_portrait = st.sidebar.checkbox(\"Portrait Video\", value=False)\n    force_rotate = st.sidebar.checkbox(\"Auto-rotate to Landscape\", value=False)\n# Load model with caching",
         "detail": "pages.1_crowd_in_mecca",
         "documentation": {}
     },
@@ -334,7 +491,7 @@
         "kind": 5,
         "importPath": "pages.1_crowd_in_mecca",
         "description": "pages.1_crowd_in_mecca",
-        "peekOfCode": "conf_threshold = st.sidebar.slider(\n    \"Confidence Threshold\", 0.1, 0.9, 0.3, 0.05\n)  # Default changed to 0.3 for better detection\n# Add mobile video handling options\nst.sidebar.markdown(\"---\")\nst.sidebar.subheader(\"📱 Mobile Video Options\")\nis_portrait = st.sidebar.checkbox(\n    \"Portrait Video\",\n    value=False,\n    help=\"Check this if your video is in portrait orientation (mobile)\",",
+        "peekOfCode": "conf_threshold = st.sidebar.slider(\"Confidence Threshold\", 0.1, 0.9, 0.3, 0.05)\n# Portrait options only for upload\nis_portrait = False\nforce_rotate = False\nif video_input_mode == \"Upload\":\n    st.sidebar.subheader(\"📱 Mobile Video Options\")\n    is_portrait = st.sidebar.checkbox(\"Portrait Video\", value=False)\n    force_rotate = st.sidebar.checkbox(\"Auto-rotate to Landscape\", value=False)\n# Load model with caching\n@st.cache_resource",
         "detail": "pages.1_crowd_in_mecca",
         "documentation": {}
     },
@@ -343,7 +500,7 @@
         "kind": 5,
         "importPath": "pages.1_crowd_in_mecca",
         "description": "pages.1_crowd_in_mecca",
-        "peekOfCode": "is_portrait = st.sidebar.checkbox(\n    \"Portrait Video\",\n    value=False,\n    help=\"Check this if your video is in portrait orientation (mobile)\",\n)\nforce_rotate = st.sidebar.checkbox(\n    \"Auto-rotate to Landscape\",\n    value=False,\n    help=\"Automatically rotate portrait videos for processing\",\n)",
+        "peekOfCode": "is_portrait = False\nforce_rotate = False\nif video_input_mode == \"Upload\":\n    st.sidebar.subheader(\"📱 Mobile Video Options\")\n    is_portrait = st.sidebar.checkbox(\"Portrait Video\", value=False)\n    force_rotate = st.sidebar.checkbox(\"Auto-rotate to Landscape\", value=False)\n# Load model with caching\n@st.cache_resource\ndef load_model(path):\n    return YOLO(path)",
         "detail": "pages.1_crowd_in_mecca",
         "documentation": {}
     },
@@ -352,7 +509,7 @@
         "kind": 5,
         "importPath": "pages.1_crowd_in_mecca",
         "description": "pages.1_crowd_in_mecca",
-        "peekOfCode": "force_rotate = st.sidebar.checkbox(\n    \"Auto-rotate to Landscape\",\n    value=False,\n    help=\"Automatically rotate portrait videos for processing\",\n)\n# Main app behavior\nif uploaded_file is not None:\n    input_video_path = \"temp_video.mp4\"\n    with open(input_video_path, \"wb\") as f:\n        f.write(uploaded_file.getbuffer())",
+        "peekOfCode": "force_rotate = False\nif video_input_mode == \"Upload\":\n    st.sidebar.subheader(\"📱 Mobile Video Options\")\n    is_portrait = st.sidebar.checkbox(\"Portrait Video\", value=False)\n    force_rotate = st.sidebar.checkbox(\"Auto-rotate to Landscape\", value=False)\n# Load model with caching\n@st.cache_resource\ndef load_model(path):\n    return YOLO(path)\n# --- Upload Mode ---",
         "detail": "pages.1_crowd_in_mecca",
         "documentation": {}
     },
@@ -370,7 +527,7 @@
         "kind": 5,
         "importPath": "pages.2_bus_detection",
         "description": "pages.2_bus_detection",
-        "peekOfCode": "available_models = [\n    \"yolo11n.pt\", \n    \"yolo11s.pt\", \n    \"yolo11m.pt\", \n    \"yolo11l.pt\", \n    \"yolo11x.pt\"\n]\nselected_model = st.sidebar.selectbox(\"Select Model\", available_models)\n# Classes to count (0=person by default)\nclasses_to_count = [0]  # Simplified to just count people by default",
+        "peekOfCode": "available_models = [\n    \"yolo11n.pt\", \n    \"yolo11s.pt\", \n    \"yolo11m.pt\", \n    \"yolo11l.pt\", \n    \"yolo11x.pt\"\n]\nselected_model = st.sidebar.selectbox(\"Select Model\", available_models)\n# Classes to count (5=bus by default in COCO dataset)\nclasses_to_count = [2,5]  # Bus class in COCO dataset",
         "detail": "pages.2_bus_detection",
         "documentation": {}
     },
@@ -379,7 +536,7 @@
         "kind": 5,
         "importPath": "pages.2_bus_detection",
         "description": "pages.2_bus_detection",
-        "peekOfCode": "selected_model = st.sidebar.selectbox(\"Select Model\", available_models)\n# Classes to count (0=person by default)\nclasses_to_count = [0]  # Simplified to just count people by default\n# Confidence threshold slider\nconf_threshold = st.sidebar.slider(\"Confidence Threshold\", 0.1, 0.9, 0.3, 0.05)  # Default changed to 0.3 for better detection\n# Main app behavior\nif uploaded_file is not None:\n    input_video_path = \"temp_video.mp4\"\n    with open(input_video_path, 'wb') as f:\n        f.write(uploaded_file.getbuffer())",
+        "peekOfCode": "selected_model = st.sidebar.selectbox(\"Select Model\", available_models)\n# Classes to count (5=bus by default in COCO dataset)\nclasses_to_count = [2,5]  # Bus class in COCO dataset\n# Confidence threshold slider\nconf_threshold = st.sidebar.slider(\"Confidence Threshold\", 0.1, 0.9, 0.3, 0.05)  # Default changed to 0.3 for better detection\n# Main app behavior\nif uploaded_file is not None:\n    input_video_path = \"temp_video.mp4\"\n    with open(input_video_path, 'wb') as f:\n        f.write(uploaded_file.getbuffer())",
         "detail": "pages.2_bus_detection",
         "documentation": {}
     },
@@ -388,7 +545,7 @@
         "kind": 5,
         "importPath": "pages.2_bus_detection",
         "description": "pages.2_bus_detection",
-        "peekOfCode": "classes_to_count = [0]  # Simplified to just count people by default\n# Confidence threshold slider\nconf_threshold = st.sidebar.slider(\"Confidence Threshold\", 0.1, 0.9, 0.3, 0.05)  # Default changed to 0.3 for better detection\n# Main app behavior\nif uploaded_file is not None:\n    input_video_path = \"temp_video.mp4\"\n    with open(input_video_path, 'wb') as f:\n        f.write(uploaded_file.getbuffer())\n    # Create two columns with equal width for videos\n    col1, col2 = st.columns(2)",
+        "peekOfCode": "classes_to_count = [2,5]  # Bus class in COCO dataset\n# Confidence threshold slider\nconf_threshold = st.sidebar.slider(\"Confidence Threshold\", 0.1, 0.9, 0.3, 0.05)  # Default changed to 0.3 for better detection\n# Main app behavior\nif uploaded_file is not None:\n    input_video_path = \"temp_video.mp4\"\n    with open(input_video_path, 'wb') as f:\n        f.write(uploaded_file.getbuffer())\n    # Create two columns with equal width for videos\n    col1, col2 = st.columns(2)",
         "detail": "pages.2_bus_detection",
         "documentation": {}
     },

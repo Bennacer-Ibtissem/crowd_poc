@@ -4,12 +4,15 @@ import time
 import numpy as np
 from ultralytics import YOLO
 import pandas as pd
-from libs.evaluation import get_model_info, process_frame, calculate_performance_metrics
 
+from libs.core.model_loader import get_model_info
+from libs.core.frame_processor import process_frame_object
+from libs.core.metrics import calculate_performance_metrics
+# from libs.evaluation import get_model_info, process_frame, calculate_performance_metrics, process_frame_object
 
 st.set_page_config(page_title="Bus Detection", layout="wide")
 
-# # Hide sidebar and other default UI elements
+# Hide sidebar and other default UI elements
 st.markdown("""
     <style>
     /* Hide the page navigation links in the sidebar */
@@ -29,8 +32,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🚌 Bus Detection ")
-
+st.title("🚌 Vehicle Detection - Live YOLO Video Processing")
 
 # Sidebar: Upload video
 uploaded_file = st.sidebar.file_uploader("Upload a video file", type=["mp4", "avi", "mov"], key="sidebar")
@@ -49,8 +51,8 @@ available_models = [
 
 selected_model = st.sidebar.selectbox("Select Model", available_models)
 
-# Classes to count (0=person by default)
-classes_to_count = [0]  # Simplified to just count people by default
+# Classes to count (5=bus by default in COCO dataset)
+classes_to_count = [2,5]  # Bus class in COCO dataset
 
 # Confidence threshold slider
 conf_threshold = st.sidebar.slider("Confidence Threshold", 0.1, 0.9, 0.3, 0.05)  # Default changed to 0.3 for better detection
@@ -118,102 +120,104 @@ if uploaded_file is not None:
             if not success:
                 break
             
+
+            if frame_count % 10 == 0 or frame_count == total_frames:
             # Process frame and get metrics
-            processed_frame, count, inference_time = process_frame(frame, model, conf_threshold, classes_to_count)
+                processed_frame, count, inference_time = process_frame_object(frame, model, conf_threshold, classes_to_count)
             
-            # Update metrics
-            frame_count += 1
-            total_inference_time += inference_time
-            total_objects_detected += count
-            object_counts.append(count)
+            # # Update metrics
+            # frame_count += 1
+            # total_inference_time += inference_time
+            # total_objects_detected += count
+            # object_counts.append(count)
             
-            # Calculate FPS
-            current_fps = 1.0 / inference_time if inference_time > 0 else 0
-            fps_list.append(current_fps)
+            # # Calculate FPS
+            # current_fps = 1.0 / inference_time if inference_time > 0 else 0
+            # fps_list.append(current_fps)
             
             # Update display every 5 frames to avoid slowdown
-            if frame_count % 5 == 0 or frame_count == total_frames:
+            # if frame_count % 5 == 0 or frame_count == total_frames:
                 # Convert BGR to RGB for display
                 display_frame = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)
                 
                 # Display processed frame
                 frame_placeholder.image(display_frame, channels="RGB", use_container_width=True)
                 
-                # Update progress text
-                progress_percentage = (frame_count / total_frames) * 100
-                progress_text.markdown(f"### Processing: {frame_count}/{total_frames} frames ({progress_percentage:.2f}%)")
+        #         # Update progress text
+        #         progress_percentage = (frame_count / total_frames) * 100
+        #         progress_text.markdown(f"### Processing: {frame_count}/{total_frames} frames ({progress_percentage:.2f}%)")
                 
-                # Display real-time metrics
-                avg_fps = sum(fps_list[-20:]) / min(len(fps_list), 20)  # Rolling average
-                avg_inference_time = total_inference_time / frame_count
-                avg_objects_per_frame = total_objects_detected / frame_count if frame_count > 0 else 0
-                max_objects_detected = max(object_counts) if object_counts else 0
+        #         # Display real-time metrics
+        #         avg_fps = sum(fps_list[-20:]) / min(len(fps_list), 20)  # Rolling average
+        #         avg_inference_time = total_inference_time / frame_count
+        #         avg_objects_per_frame = total_objects_detected / frame_count if frame_count > 0 else 0
+        #         max_objects_detected = max(object_counts) if object_counts else 0
                 
-                metrics_data = calculate_performance_metrics(
-                    video_length=total_frames / fps,
-                    frame_size=(w, h),
-                    model_name=selected_model,
-                    num_params=num_params,
-                    avg_fps=avg_fps,
-                    avg_inference_time=avg_inference_time,
-                    total_inference_time=total_inference_time,
-                    total_objects_detected=total_objects_detected,
-                    video_name=uploaded_file.name,
-                    total_frames=total_frames,
-                    avg_objects_per_frame=avg_objects_per_frame,
-                    max_objects_detected=max_objects_detected
-                )
-                metrics_placeholder.dataframe(pd.DataFrame(metrics_data), hide_index=True)
+        #         metrics_data = calculate_performance_metrics(
+        #             video_length=total_frames / fps,
+        #             frame_size=(w, h),
+        #             model_name=selected_model,
+        #             num_params=num_params,
+        #             avg_fps=avg_fps,
+        #             avg_inference_time=avg_inference_time,
+        #             total_inference_time=total_inference_time,
+        #             total_objects_detected=total_objects_detected,
+        #             video_name=uploaded_file.name,
+        #             total_frames=total_frames,
+        #             avg_objects_per_frame=avg_objects_per_frame,
+        #             max_objects_detected=max_objects_detected
+        #         )
+        #         metrics_placeholder.dataframe(pd.DataFrame(metrics_data), hide_index=True)
         
-        # Release resources
+        # # Release resources
         cap.release()
         
         # Final success message
         st.success(f"✅ Processing completed! Processed {frame_count} frames.")
         
-        # Display performance data in two columns for better layout
-        col1, col2 = st.columns(2)
+        # # Display performance data in two columns for better layout
+        # col1, col2 = st.columns(2)
         
-        with col1:
-            # Display summary metrics
-            st.subheader("📊 Performance Metrics")
-            results_table = pd.DataFrame(calculate_performance_metrics(
-                video_length=total_frames / fps,
-                frame_size=(w, h),
-                model_name=selected_model,
-                num_params=num_params,
-                avg_fps=frame_count / total_inference_time if total_inference_time > 0 else 0,
-                avg_inference_time=total_inference_time / frame_count if frame_count > 0 else 0,
-                total_inference_time=total_inference_time,
-                total_objects_detected=total_objects_detected,
-                video_name=uploaded_file.name,
-                total_frames=total_frames,
-                avg_objects_per_frame=total_objects_detected / frame_count if frame_count > 0 else 0,
-                max_objects_detected=max(object_counts) if object_counts else 0
-            ))
-            st.dataframe(results_table)
+        # with col1:
+        #     # Display summary metrics
+        #     st.subheader("📊 Performance Metrics")
+        #     results_table = pd.DataFrame(calculate_performance_metrics(
+        #         video_length=total_frames / fps,
+        #         frame_size=(w, h),
+        #         model_name=selected_model,
+        #         num_params=num_params,
+        #         avg_fps=frame_count / total_inference_time if total_inference_time > 0 else 0,
+        #         avg_inference_time=total_inference_time / frame_count if frame_count > 0 else 0,
+        #         total_inference_time=total_inference_time,
+        #         total_objects_detected=total_objects_detected,
+        #         video_name=uploaded_file.name,
+        #         total_frames=total_frames,
+        #         avg_objects_per_frame=total_objects_detected / frame_count if frame_count > 0 else 0,
+        #         max_objects_detected=max(object_counts) if object_counts else 0
+        #     ))
+        #     st.dataframe(results_table)
         
-        with col2:
-            # Display chart of object counts over time
-            if frame_count > 0:
-                st.subheader("📈 Detection Metrics")
+        # with col2:
+        #     # Display chart of object counts over time
+        #     if frame_count > 0:
+        #         st.subheader("📈 Detection Metrics")
                 
-                # Create tabs for different charts
-                tab1, tab2 = st.tabs(["People Count", "FPS"])
+        #         # Create tabs for different charts
+        #         tab1, tab2 = st.tabs(["Bus Count", "FPS"])
                 
-                with tab1:
-                    count_chart_data = pd.DataFrame({
-                        'frame': list(range(1, frame_count + 1)),
-                        'Count': object_counts
-                    })
-                    st.line_chart(count_chart_data.set_index('frame'))
+        #         with tab1:
+        #             count_chart_data = pd.DataFrame({
+        #                 'frame': list(range(1, frame_count + 1)),
+        #                 'Count': object_counts
+        #             })
+        #             st.line_chart(count_chart_data.set_index('frame'))
                 
-                with tab2:
-                    fps_chart_data = pd.DataFrame({
-                        'frame': list(range(1, frame_count + 1)),
-                        'FPS': fps_list
-                    })
-                    st.line_chart(fps_chart_data.set_index('frame'))
+        #         with tab2:
+        #             fps_chart_data = pd.DataFrame({
+        #                 'frame': list(range(1, frame_count + 1)),
+        #                 'FPS': fps_list
+        #             })
+        #             st.line_chart(fps_chart_data.set_index('frame'))
 
 else:
     st.info("👈 Please upload a video file to start.")
