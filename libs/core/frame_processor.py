@@ -196,7 +196,7 @@ def process_frame_object(
     try:
         # Run YOLO prediction
         results = model.predict(
-            resized, conf=conf_threshold, iou=0.45, classes=classes_to_count
+            resized, conf=conf_threshold, iou=0.45, classes=classes_to_count, verbose=False
         )[0]
 
         boxes = results.boxes.xyxy.cpu().numpy()
@@ -207,12 +207,22 @@ def process_frame_object(
         return frame, {}, time() - start_time
 
     # Count objects by class
+    # Count objects by class using np.unique for efficiency
     object_count = {}
-    for i in classes_to_count:
-        if i in class_mapping:
-            # Count objects of this class
-            class_name = class_mapping[i]
-            object_count[class_name] = int(np.sum(class_ids == i))
+    if len(class_ids) > 0:
+        # Calculer les comptes en une seule opération
+        unique_ids, counts = np.unique(class_ids, return_counts=True)
+ 
+        # Remplir object_count avec les mêmes noms de variables
+        for i in classes_to_count:
+            if i in class_mapping:
+                class_name = class_mapping[i]
+                # Vérifier si cette classe a été détectée
+                idx = np.where(unique_ids == i)[0]
+                if len(idx) > 0:
+                    object_count[class_name] = int(counts[idx[0]])
+                else:
+                    object_count[class_name] = 0
 
     # Draw boxes with detailed information
     display_frame = draw_boxes(
