@@ -64,14 +64,7 @@ conf_threshold = st.sidebar.slider(
 )  # Default changed to 0.3 for better detection
 
 # Frame skipping factor selection
-skip_factor = st.sidebar.slider(
-    "Frame Skip Factor",
-    1,
-    10,
-    5,
-    1,
-    help="Process 1 frame for every N frames (higher = faster, lower = more accurate)",
-)
+skip_factor = 5
 
 # Main app behavior
 if uploaded_file is not None:
@@ -105,12 +98,12 @@ if uploaded_file is not None:
 
         # Display video information AFTER the video
         st.video(input_video_path)
-        st.info(
-            f"Video Info: {total_frames} frames, {fps} FPS, {video_duration:.2f} seconds"
-        )
-        st.info(
-            f"With frame skip {skip_factor}, expecting to process ~{expected_processed_frames} frames"
-        )
+        # st.info(
+        #     f"Video Info: {total_frames} frames, {fps} FPS, {video_duration:.2f} seconds"
+        # )
+        # st.info(
+        #     f"With frame skip {skip_factor}, expecting to process ~{expected_processed_frames} frames"
+        # )
 
     if st.button("🚀 Start Processing"):
         # Load model
@@ -291,9 +284,9 @@ if uploaded_file is not None:
         total_elapsed_time = time.time() - overall_start_time
 
         # Final success message
-        st.success(
-            f"✅ Processing completed! Processed {frame_count} out of {total_frames} frames in {total_elapsed_time:.2f} seconds."
-        )
+        # st.success(
+        #     f"✅ Processing completed! Processed {frame_count} out of {total_frames} frames in {total_elapsed_time:.2f} seconds."
+        # )
 
         # Display performance data in two columns for better layout
         col1, col2 = st.columns(2)

@@ -86,9 +86,7 @@ selected_model = st.sidebar.selectbox("Select Model", available_models)
 
 conf_threshold = st.sidebar.slider("Confidence Threshold", 0.1, 0.9, 0.3, 0.05)
 
-skip_factor = st.sidebar.slider(
-    "Frame Skip Factor", 1, 10, 5, 1, help="Process 1 frame for every N frames"
-)
+skip_factor = 5
 
 
 classes_to_count = [0]  # 0=person
@@ -136,13 +134,13 @@ if video_input_mode == "Upload" and uploaded_file is not None:
 
         st.video(input_video_path)
 
-        st.info(
-            f"Video Info: {total_frames} frames, {fps} FPS, {video_duration:.2f} seconds"
-        )
+        # st.info(
+        #     f"Video Info: {total_frames} frames, {fps} FPS, {video_duration:.2f} seconds"
+        # )
 
-        st.info(
-            f"With frame skip {skip_factor}, expecting to process ~{expected_processed_frames} frames"
-        )
+        # st.info(
+        #     f"With frame skip {skip_factor}, expecting to process ~{expected_processed_frames} frames"
+        # )
 
     if st.button("🚀 Start Processing"):
 
@@ -314,9 +312,9 @@ if video_input_mode == "Upload" and uploaded_file is not None:
 
             cap.release()
 
-        st.success(
-            f"✅ Done! Processed {frame_count}/{total_frames} frames in {time.time() - overall_start_time:.2f} sec"
-        )
+        # st.success(
+        #     f"✅ Done! Processed {frame_count}/{total_frames} frames in {time.time() - overall_start_time:.2f} sec"
+        # )
 
         col1, col2 = st.columns(2)
 

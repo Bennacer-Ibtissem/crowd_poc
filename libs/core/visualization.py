@@ -106,7 +106,7 @@ def draw_boxes(
                 label,
                 (x1, y1 - baseline),
                 cv2.FONT_HERSHEY_SIMPLEX,
-                0.4,
+                0.8,
                 (0, 0, 0),
                 1,
             )

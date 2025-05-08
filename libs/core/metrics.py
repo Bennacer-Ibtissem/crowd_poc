@@ -28,7 +28,6 @@ def calculate_performance_metrics(
         total_objects_detected: Total number of objects detected
         video_name: Name of the video file
         total_frames: Total number of frames in the video
-        processed_frames: Number of frames actually processed (default: same as total_frames)
         avg_objects_per_frame: Average objects detected per frame
         max_objects_detected: Maximum objects detected in any frame
         total_elapsed_time: Total elapsed processing time (including overhead)
@@ -43,9 +42,7 @@ def calculate_performance_metrics(
 
     return {
         "Metric": [
-            "Video Name",
             "Total Frames",
-            "Processed Frames",
             "Frame Size",
             "Model",
             "Parameters",
@@ -57,9 +54,7 @@ def calculate_performance_metrics(
             "Max Objects Detected",
         ],
         "Value": [
-            video_name,
             total_frames,
-            processed_frames,
             f"{frame_size[0]}x{frame_size[1]}",
             model_name,
             f"{num_params:,}",
