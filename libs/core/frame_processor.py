@@ -208,16 +208,17 @@ def process_frame_object(
 
     # Count objects by class
     # Count objects by class using np.unique for efficiency
+     # Count objects by class using np.unique for efficiency
     object_count = {}
     if len(class_ids) > 0:
-        # Calculer les comptes en une seule opération
+        # Count occurrences of each class ID
         unique_ids, counts = np.unique(class_ids, return_counts=True)
- 
-        # Remplir object_count avec les mêmes noms de variables
+        # fill the object_count dictionary with counts for specified classes
         for i in classes_to_count:
             if i in class_mapping:
                 class_name = class_mapping[i]
-                # Vérifier si cette classe a été détectée
+                # check if the class ID exists in unique_ids
+                # and get the corresponding count
                 idx = np.where(unique_ids == i)[0]
                 if len(idx) > 0:
                     object_count[class_name] = int(counts[idx[0]])
