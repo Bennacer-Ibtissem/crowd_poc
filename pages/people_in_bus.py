@@ -1,190 +1,334 @@
 import streamlit as st
 import cv2
 import time
-import numpy as np
-from ultralytics import YOLO
 import pandas as pd
-from libs.evaluation import get_model_info, process_frame, calculate_performance_metrics
+import logging
+from libs.core.model_loader import get_model_info, load_yolo_model
+from libs.core.frame_processor import process_frame_object, DEFAULT_CLASS_MAPPING
+from libs.core.metrics import calculate_performance_metrics
+import os
 
-# Streamlit Page Configuration
-st.set_page_config(page_title="YOLO Model Performance Comparison", layout="wide")
-st.title("🚶‍♂️ Crowd Detection with YOLOv11 Models")
+ 
+st.set_page_config(page_title="Crowd in Mecca", layout="wide")
+ 
+# Custom UI hiding
 
-# Sidebar: Upload video
-uploaded_file = st.sidebar.file_uploader("Upload a video file", type=["mp4", "avi", "mov"])
+st.markdown("""
+<style>
 
-# Sidebar: Model selection
-st.sidebar.title("🔧 Settings")
+    [data-testid="stSidebarNav"], [data-testid="collapsedControl"] { display: none; }
 
-# Only YOLOv11 models as specified
+    header, footer { visibility: hidden; }
+</style>
+
+""", unsafe_allow_html=True)
+ 
+st.title("🕋 Crowd in Mecca ")
+ 
+# Sidebar layout
+
+st.sidebar.title("🎥 Video Input Mode")
+ 
+video_input_mode = st.sidebar.radio(
+
+    "Choose Input Source",
+
+    options=["Upload", "Stream"],
+
+    index=0,
+
+    horizontal=True
+
+)
+ 
+uploaded_file = None
+
+stream_url = ""
+ 
+# Show file uploader only in Upload mode
+
+if video_input_mode == "Upload":
+
+    uploaded_file = st.sidebar.file_uploader(
+
+        "📁 Browse a video file", type=["mp4", "avi", "mov"]
+
+    )
+ 
+# Show RTMP input only in Stream mode
+
+if video_input_mode == "Stream":
+
+    stream_url = st.sidebar.text_input(
+
+        "🔗 Stream URL", 
+
+        value="rtmp://localhost:1935/live/stream", 
+
+        help="Enter your stream address."
+
+    )
+ 
+# Shared settings
+
+st.sidebar.title("🔧 Model Settings")
+
 available_models = [
-    "yolo11n.pt", 
-    "yolo11s.pt", 
-    "yolo11m.pt", 
-    "yolo11l.pt", 
-    "yolo11x.pt"
+
+    "yolo11n.pt", "yolo11s.pt", "yolo11m.pt", "yolo11l.pt", "yolo11x.pt"
+
 ]
 
 selected_model = st.sidebar.selectbox("Select Model", available_models)
 
-# Classes to count (0=person by default)
-classes_to_count = [0]  # Simplified to just count people by default
+conf_threshold = st.sidebar.slider("Confidence Threshold", 0.1, 0.9, 0.3, 0.05)
+skip_factor = st.sidebar.slider(
+    "Frame Skip Factor",
+    1,
+    10,
+    5,
+    1,
+    help="Process 1 frame for every N frames (higher = faster, lower = more accurate)",
+)
 
-# Confidence threshold slider
-conf_threshold = st.sidebar.slider("Confidence Threshold", 0.1, 0.9, 0.5, 0.05)
+# Portrait options only for upload
 
-# Main app behavior
-if uploaded_file is not None:
-    input_video_path = "temp_video.mp4"
-    with open(input_video_path, 'wb') as f:
-        f.write(uploaded_file.getbuffer())
-    
-    # Create two columns with equal width for videos
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.subheader("📊 Original Video")
-        # Get video dimensions for consistent display
-        cap = cv2.VideoCapture(input_video_path)
-        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        cap.release()
-        
-        # Display original video
-        st.video(input_video_path)
-    
-    if st.button("🚀 Start Processing"):
-        # Load model
-        with st.spinner(f"Loading model {selected_model}..."):
-            try:
-                model = YOLO(selected_model)
-                model_size, num_params = get_model_info(selected_model)
-            except Exception as e:
-                st.error(f"Error loading model: {e}")
-                st.stop()
-        
-        # Initialize video capture
-        cap = cv2.VideoCapture(input_video_path)
-        assert cap.isOpened(), "Error reading video file"
-        
-        # Get video properties
-        w, h, fps = (int(cap.get(x)) for x in (cv2.CAP_PROP_FRAME_WIDTH, cv2.CAP_PROP_FRAME_HEIGHT, cv2.CAP_PROP_FPS))
-        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        
-        # Create a text placeholder for progress updates
-        progress_text = st.empty()
-        
-        # Create a frame placeholder for live preview (same size as original)
-        with col2:
-            st.subheader("🎬 Live Processing")
-            frame_placeholder = st.empty()
-        
-        # Create metrics tracking
-        frame_count = 0
-        total_inference_time = 0
-        total_objects_detected = 0
-        fps_list = []
-        object_counts = []
-        
-        # Set up metrics display
-        metrics_placeholder = st.empty()
-        
-        # Process video
-        while cap.isOpened():
-            success, frame = cap.read()
-            if not success:
-                break
-            
-            # Process frame and get metrics
-            processed_frame, count, inference_time = process_frame(frame, model, conf_threshold, classes_to_count)
-            
-            # Update metrics
-            frame_count += 1
-            total_inference_time += inference_time
-            total_objects_detected += count
-            object_counts.append(count)
-            
-            # Calculate FPS
-            current_fps = 1.0 / inference_time if inference_time > 0 else 0
-            fps_list.append(current_fps)
-            
-            # Update display every 5 frames to avoid slowdown
-            if frame_count % 5 == 0 or frame_count == total_frames:
-                # Display processed frame
-                display_frame = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)
-                frame_placeholder.image(display_frame, channels="RGB", use_container_width=True)
-                
-                # Update progress text
-                progress_percentage = (frame_count / total_frames) * 100
-                progress_text.markdown(f"### Processing: {frame_count}/{total_frames} frames ({progress_percentage:.2f}%)")
-                
-                # Display real-time metrics
-                avg_fps = sum(fps_list[-20:]) / min(len(fps_list), 20)  # Rolling average
-                avg_inference_time = total_inference_time / frame_count
-                
-                metrics_data = calculate_performance_metrics(
-                    video_length=total_frames / fps,
-                    frame_size=(w, h),
-                    model_name=selected_model,
-                    num_params=num_params,
-                    avg_fps=avg_fps,
-                    avg_inference_time=avg_inference_time,
-                    total_inference_time=total_inference_time,
-                    total_objects_detected=total_objects_detected
-                )
-                metrics_placeholder.dataframe(pd.DataFrame(metrics_data), hide_index=True)
-        
-        # Release resources
-        cap.release()
-        
-        # Final success message
-        st.success(f"✅ Processing completed! Processed {frame_count} frames.")
-        
-        # Display performance data in two columns for better layout
+is_portrait = False
+
+force_rotate = False
+
+if video_input_mode == "Upload":
+
+    st.sidebar.subheader("📱 Mobile Video Options")
+
+    is_portrait = st.sidebar.checkbox("Portrait Video", value=False)
+
+    force_rotate = st.sidebar.checkbox("Auto-rotate to Landscape", value=False)
+ 
+# Load model with caching
+
+@st.cache_resource
+
+def load_model(path):
+
+    return YOLO(path)
+ 
+# --- Upload Mode ---
+
+if video_input_mode == "Upload":
+
+    if uploaded_file is not None:
+
         col1, col2 = st.columns(2)
-        
-        with col1:
-            # Display summary metrics
-            avg_inference_time = total_inference_time / frame_count if frame_count > 0 else 0
-            avg_fps = frame_count / total_inference_time if total_inference_time > 0 else 0
-            
-            # Create performance table
-            st.subheader("📊 Performance Metrics")
-            
-            results_table = pd.DataFrame(calculate_performance_metrics(
-                video_length=total_frames / fps,
-                frame_size=(w, h),
-                model_name=selected_model,
-                num_params=num_params,
-                avg_fps=avg_fps,
-                avg_inference_time=avg_inference_time,
-                total_inference_time=total_inference_time,
-                total_objects_detected=total_objects_detected
-            ))
-            
-            st.dataframe(results_table)
-        
-        with col2:
-            # Display chart of object counts over time
-            if frame_count > 0:
-                st.subheader("📈 Detection Metrics")
-                
-                # Create tabs for different charts
-                tab1, tab2 = st.tabs(["FPS", "Object Count"])
-                
-                with tab1:
-                    fps_chart_data = pd.DataFrame({
-                        'frame': list(range(1, frame_count + 1)),
-                        'FPS': fps_list
-                    })
-                    st.line_chart(fps_chart_data.set_index('frame'))
-                
-                with tab2:
-                    count_chart_data = pd.DataFrame({
-                        'frame': list(range(1, frame_count + 1)),
-                        'Count': object_counts
-                    })
-                    st.line_chart(count_chart_data.set_index('frame'))
 
-else:
-    st.info("👈 Please upload a video file to start.")
+        input_video_path = "temp_video.mp4"
+
+        with open(input_video_path, "wb") as f:
+
+            f.write(uploaded_file.getbuffer())
+ 
+        with col1:
+
+            st.subheader("📊 Original Video")
+
+            cap = cv2.VideoCapture(input_video_path)
+
+            width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+
+            height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+            fps = int(cap.get(cv2.CAP_PROP_FPS))
+ 
+            if not is_portrait:
+
+                ret, frame = cap.read()
+
+                if ret:
+
+                    auto_orientation = get_video_orientation(frame)
+
+                    is_portrait = auto_orientation == "portrait"
+
+                    cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+
+            cap.release()
+ 
+            orientation_text = "Portrait (Mobile)" if is_portrait else "Landscape"
+
+            st.info(f"Detected Video Orientation: {orientation_text}")
+
+            st.video(input_video_path)
+ 
+        if st.button("🚀 Start Processing"):
+
+            with st.spinner(f"Loading model {selected_model}..."):
+
+                model = load_model(selected_model)
+
+                model_size, num_params = get_model_info(selected_model)
+ 
+            cap = cv2.VideoCapture(input_video_path)
+
+            total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+            w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+
+            h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+            fps = int(cap.get(cv2.CAP_PROP_FPS))
+ 
+            with col2:
+                st.subheader("🎬 Live Processing")
+                if is_portrait:
+                    st.info("📱 Processing Portrait Video" + (" (Auto-rotating)" if force_rotate else ""))
+                else:
+                    st.info("🎥 Processing Video")
+                frame_placeholder = st.empty()
+
+            progress_text = st.empty()
+
+            metrics_placeholder = st.empty()
+
+            frame_count = 0
+
+            total_inference_time = 0
+
+            total_objects_detected = 0
+
+            fps_list = []
+
+            object_counts = []
+ 
+            while cap.isOpened():
+
+                success, frame = cap.read()
+
+                if not success:
+
+                    break
+ 
+                processed_frame, count, inference_time = process_frame(
+
+                    frame, model, conf_threshold, [0],
+
+                    is_portrait=is_portrait, force_rotate=force_rotate
+
+                )
+ 
+                frame_count += 1
+
+                total_inference_time += inference_time
+
+                total_objects_detected += count
+
+                fps_list.append(1.0 / inference_time if inference_time > 0 else 0)
+
+                object_counts.append(count)
+ 
+                if frame_count % 5 == 0:
+
+                    display_frame = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)
+
+                    frame_placeholder.image(display_frame, channels="RGB", use_container_width=True)
+ 
+                    progress_percentage = (frame_count / total_frames) * 100
+
+                    progress_text.markdown(f"### Processing: {frame_count}/{total_frames} frames ({progress_percentage:.2f}%)")
+ 
+                    metrics_data = calculate_performance_metrics(
+
+                        video_length=total_frames / fps,
+
+                        frame_size=(w, h),
+
+                        model_name=selected_model,
+
+                        num_params=num_params,
+
+                        avg_fps=sum(fps_list[-20:]) / len(fps_list[-20:]),
+
+                        avg_inference_time=total_inference_time / frame_count,
+
+                        total_inference_time=total_inference_time,
+
+                        total_objects_detected=total_objects_detected,
+
+                        video_name=uploaded_file.name,
+
+                        total_frames=total_frames,
+
+                        avg_objects_per_frame=total_objects_detected / frame_count,
+
+                        max_objects_detected=max(object_counts),
+
+                        is_portrait=is_portrait,
+
+                    )
+
+                    metrics_placeholder.dataframe(pd.DataFrame(metrics_data), hide_index=True)
+ 
+            cap.release()
+
+            st.success(f"✅ Done! Processed {frame_count} frames.")
+ 
+# --- Stream Mode ---
+
+elif video_input_mode == "Stream":
+
+    st.info(f"🔴 Connecting to stream: `{stream_url}`")
+
+    cap = cv2.VideoCapture(stream_url)
+ 
+    if not cap.isOpened():
+
+        st.error("❌ Could not open stream. Check the URL or network.")
+
+    else:
+
+        with st.spinner(f"Loading model {selected_model}..."):
+
+            model = load_model(selected_model)
+
+            model_size, num_params = get_model_info(selected_model)
+ 
+        frame_placeholder = st.empty()
+
+        fps_display = st.empty()
+
+        object_display = st.empty()
+ 
+        st.success("✅ Streaming started. Press Stop or refresh to exit.")
+
+        stop_button = st.button("🛑 Stop Stream")
+ 
+        while cap.isOpened() and not stop_button:
+
+            ret, frame = cap.read()
+
+            if not ret:
+
+                st.warning("⚠️ Stream ended or cannot read frame.")
+
+                break
+ 
+            processed_frame, count, inference_time = process_frame(
+
+                frame, model, conf_threshold, [0],
+
+                is_portrait=False, force_rotate=False
+
+            )
+ 
+            display_frame = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)
+
+            frame_placeholder.image(display_frame, channels="RGB", use_container_width=True)
+ 
+            fps_display.markdown(f"**FPS:** {1.0/inference_time:.2f}")
+
+            object_display.markdown(f"**People Detected:** {count}")
+ 
+            time.sleep(0.02)
+ 
+        cap.release()
+
+ 

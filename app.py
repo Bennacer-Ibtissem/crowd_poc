@@ -67,7 +67,7 @@ with col2:
             <button type="submit" style="all: unset; width: 100%;">
         <div class="card">
             <div class="icon">🚌</div>
-            <div class="title">Bus Detection</div>
+            <div class="title">Vehicles Detection</div>
             <p>Automatic bus recognition and tracking </p> 
         </div> </button>
         </form>
