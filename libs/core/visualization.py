@@ -3,12 +3,15 @@ import numpy as np
 
 # Default class mapping for common COCO classes
 DEFAULT_CLASS_MAPPING = {
-    0: "human",  # person
-    2: "car",  # car
-    5: "bus",  # bus
-    7: "truck",  # truck
-    1: "bicycle",  # bicycle
-    3: "motorcycle",  # motorcycle
+    0: "human",
+    2: "car",
+    5: "bus",
+    7: "truck",
+    1: "bicycle",
+    3: "motorcycle",
+    24: "backpack",
+    26: "handbag",
+    28: "suitcase",
 }
 
 # Default colors for different classes
@@ -19,7 +22,11 @@ DEFAULT_COLORS = {
     7: (255, 255, 0),  # Cyan for truck
     1: (255, 0, 255),  # Magenta for bicycle
     3: (0, 255, 255),  # Yellow for motorcycle
+    24: (255, 128, 0),  # Orange for backpack
+    26: (128, 0, 255),  # Purple for handbag
+    28: (0, 128, 255),  # Pink for suitcase
     "default": (255, 255, 255),  # White for others
+    "abandoned": (0, 0, 255),  # Red for abandoned luggage
 }
 
 
@@ -36,6 +43,7 @@ def draw_boxes(
     counts,
     class_mapping=None,
     colors=None,
+    abandoned_luggage_info=None,
 ):
     """
     Draw bounding boxes on the frame with class-specific colors
@@ -51,10 +59,8 @@ def draw_boxes(
         counts: Dictionary of counts by class
         class_mapping: Dictionary mapping class IDs to names (default: DEFAULT_CLASS_MAPPING)
         colors: Dictionary mapping class IDs to colors (default: DEFAULT_COLORS)
+        abandoned_luggage_info: List of dictionaries containing abandoned luggage information
     """
-    scale_x = orig_w / res_w
-    scale_y = orig_h / res_h
-
     # Use default mappings if none provided
     if class_mapping is None:
         class_mapping = DEFAULT_CLASS_MAPPING
@@ -67,11 +73,15 @@ def draw_boxes(
         if int(cls_id) not in classes_to_count:
             continue
 
+        # Skip if we run out of boxes
+        if idx >= len(boxes):
+            continue
+
         try:
             x1, y1, x2, y2 = boxes[idx]
-            x1, y1, x2, y2 = map(
-                int, [x1 * scale_x, y1 * scale_y, x2 * scale_x, y2 * scale_y]
-            )
+
+            # No need to scale - boxes should already be in original frame coordinates
+            x1, y1, x2, y2 = map(int, [x1, y1, x2, y2])
 
             # Ensure coordinates are within frame bounds
             x1 = max(0, min(x1, orig_w - 1))
@@ -79,15 +89,20 @@ def draw_boxes(
             x2 = max(0, min(x2, orig_w - 1))
             y2 = max(0, min(y2, orig_h - 1))
 
-            conf = confidences[idx]
-            color = colors.get(int(cls_id), colors["default"])
+            # Skip drawing if box is too small
+            if x2 <= x1 or y2 <= y1:
+                continue
 
-            cv2.rectangle(frame, (x1, y1), (x2, y2), color, 1)
+            conf = confidences[idx] if idx < len(confidences) else 0.0
+            # Increase thickness for all boxes
+            box_thickness = 3
+            color = colors.get(int(cls_id), colors["default"])
+            cv2.rectangle(frame, (x1, y1), (x2, y2), color, box_thickness)
 
             # Add confidence score with appropriate background
             label = f"{conf:.2f}"
             label_size, baseline = cv2.getTextSize(
-                label, cv2.FONT_HERSHEY_SIMPLEX, 0.4, 1
+                label, cv2.FONT_HERSHEY_SIMPLEX, 0.7, 2
             )
             y1 = max(y1, label_size[1])
 
@@ -106,11 +121,11 @@ def draw_boxes(
                 label,
                 (x1, y1 - baseline),
                 cv2.FONT_HERSHEY_SIMPLEX,
-                0.8,
+                0.7,
                 (0, 0, 0),
-                1,
+                2,
             )
-        except Exception:
+        except Exception as e:
             continue
 
     # Add summary text (counts) to the frame
@@ -124,20 +139,20 @@ def draw_boxes(
 
         if summary_text:
             # Draw text with background that spans the whole text
-            font_scale = 0.7
-            thickness = 1
+            font_scale = 1.2
+            thickness = 3
             text_size, _ = cv2.getTextSize(
                 summary_text, cv2.FONT_HERSHEY_SIMPLEX, font_scale, thickness
             )
 
             # Position at top-left with padding
-            pos_x, pos_y = 10, 30
+            pos_x, pos_y = 10, 45
 
             # Draw background
             cv2.rectangle(
                 frame,
-                (pos_x - 5, pos_y - text_size[1] - 5),
-                (pos_x + text_size[0] + 5, pos_y + 5),
+                (pos_x - 8, pos_y - text_size[1] - 8),
+                (pos_x + text_size[0] + 8, pos_y + 8),
                 (0, 0, 0),  # Black background
                 cv2.FILLED,
             )
@@ -154,5 +169,20 @@ def draw_boxes(
             )
     except Exception:
         pass
+
+    # Draw prominent warning for abandoned luggage
+    if abandoned_luggage_info is not None:
+        for info in abandoned_luggage_info:
+            x1, y1, x2, y2 = map(int, info["bbox"])
+            cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 255), 6)
+            cv2.putText(
+                frame,
+                " ABANDONED !",
+                (x1, max(y1 - 20, 30)),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                1.5,
+                (0, 0, 255),
+                5,
+            )
 
     return frame
